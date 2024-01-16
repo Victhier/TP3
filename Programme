@@ -1,0 +1,62 @@
+//Présentation TP3
+
+#include <Servo.h>
+
+// Déclaration des broches
+const int ledRouge = 3;
+const int ledVerte = 4;
+const int bouton = 2;
+const int servo = 9;
+
+// Déclaration des objets
+Servo monServo;
+
+void setup() {
+  // Initialisation des broches en tant que sorties ou entrées
+  pinMode(ledRouge, OUTPUT);
+  pinMode(ledVerte, OUTPUT);
+  pinMode(bouton, INPUT);
+  monServo.attach(servo);
+
+  // Initialisation des états initiaux
+  digitalWrite(ledRouge, HIGH);
+  digitalWrite(ledVerte, LOW);
+  monServo.write(0);
+
+  // Initialisation de la communication série à 9600 bauds
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Vérification de l'état du bouton-poussoir
+  if (digitalRead(bouton) == HIGH) {
+    // Affichage dans le moniteur série
+    Serial.println("Bouton appuyé");
+
+    // Rotation du servo jusqu'à 90 degrés
+    for (int angle = 0; angle <= 90; angle++) {
+      monServo.write(angle);
+      delay(50); // Ajoutez un délai si nécessaire pour que le servo atteigne la position souhaitée
+      digitalWrite(ledRouge, HIGH);
+    }
+
+    // Allumage de la LED verte pendant 5 secondes
+    digitalWrite(ledVerte, HIGH);
+    digitalWrite(ledRouge, LOW);
+    delay(5000);
+
+    // Extinction de la LED verte, allumage de la LED rouge
+    digitalWrite(ledVerte, LOW);
+    digitalWrite(ledRouge, HIGH);
+
+    // Rotation du servo pour revenir à la position initiale (plus lentement)
+    for (int angle = 90; angle >= 0; angle--) {
+      monServo.write(angle);
+      delay(50); // Augmentez ce délai pour ralentir la rotation du servo
+    }
+    
+        // Attente de 5 secondes
+    delay(5000);
+
+  }
+}
